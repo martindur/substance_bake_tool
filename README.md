@@ -30,4 +30,6 @@ python3 bakerGUI.py
 ```
 4. Copy/Paste your *mesh input* path and *texture output* path. As well as locate the sbsbaker.exe(for win) or just sbsbaker(Mac/Linux)
 
-5. Bake your stuff!
+5. Hit the **Save prefs** to save the paths.
+
+6. Bake your stuff!
