@@ -1,1 +1,0 @@
-export PATH="/Applications/Substance\ Automation\ Toolkit:/Users/dur/anaconda/bin:/Users/dur/Android/platform-tools:/Users/dur/Android/tools:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/share/dotnet:/usr/local/go/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Library/TeX/texbin"
