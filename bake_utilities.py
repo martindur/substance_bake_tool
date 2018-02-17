@@ -3,6 +3,11 @@ import sys
 import subprocess
 import shutil
 
+def get_sbsbaker(path):
+    if 'darwin' or 'linux' in sys.platform:
+        return os.path.join(path, os.sep, 'sbsbaker')
+    elif 'win' in sys.platform:
+        return os.path.join(path, os.sep, 'sbsbaker.exe')
 
 def run_command_popen(cmd):
     sp = subprocess.Popen(cmd, stderr=subprocess.PIPE)
@@ -29,30 +34,32 @@ def get_meshes_in_path(meshes_path, extension):
     else:
         print("Provided path is not valid: " + meshes_path)
 
-def bake_from_meshes(map_type, meshes_path, width_resolution, height_resolution, output_path):
+def bake_from_meshes(map_type, sbsbaker, meshes_path, width_resolution, height_resolution, output_path):
     meshes = get_meshes_in_path(meshes_path, '.fbx')
+    #sbsbaker = get_sbsbaker(sbsbaker_path)
+    #print(sbsbaker)
     if not meshes:
         return None
     for mesh in meshes:
         if map_type == 'curvature':
-            bake_cmd = ['sbsbaker', map_type,
+            bake_cmd = [sbsbaker, map_type,
                     '--inputs', mesh, 
                     '--output-size', width_resolution + ',' + height_resolution,
                     '--output-path', output_path,
                     '--enable-seams', 'false']
         else:    
-            bake_cmd = ['sbsbaker', map_type,
+            bake_cmd = [sbsbaker, map_type,
                     '--inputs', mesh, 
                     '--output-size', width_resolution + ',' + height_resolution,
                     '--output-path', output_path]
         run_command_popen(bake_cmd)
 
-def bake_curvature_from_meshes(map_type, meshes_path, width_resolution, height_resolution, output_path):
+def bake_curvature_from_meshes(map_type, sbsbaker, meshes_path, width_resolution, height_resolution, output_path):
     meshes = get_meshes_in_path(meshes_path, '.fbx')
     if not meshes:
         return None
     for mesh in meshes:
-        bake_cmd = ['sbsbaker', map_type,
+        bake_cmd = [sbsbaker, map_type,
                     '--inputs', mesh, 
                     '--output-size', width_resolution + ',' + height_resolution,
                     '--output-path', output_path]

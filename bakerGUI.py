@@ -1,17 +1,10 @@
 import os
+import json
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox as msg
 import bake_utilities as bu
 #from ttkthemes import themed_tk as tk
-
-
-bakes_available = [
-    'ambient-occlusion',
-    'curvature',
-    'normal',
-    'position'
-]
 
 #Outputs are based on a 2^value. E.g. 2^7 is 128.
 outputs = {
@@ -23,13 +16,41 @@ outputs = {
     '4096':'12'
 }
 
-def bake_meshes():
-    output_path = dir_entries['Texture Output'].get()
-    mesh_input_path = dir_entries['Mesh Input'].get()
-    mesh_output_path = dir_entries['Mesh Output(Optional)'].get()
+def initialization():
+    for file_name in os.listdir(str(os.curdir)):
+        if file_name == 'prefs.json':
+            load_prefs()
+            return
+    init_prefs()
 
-    print(mesh_input_path)
-    print(output_path)
+def init_prefs():
+    prefs = {
+        'sbsbaker':'',
+        'mesh-input':'',
+        'texture-output':''
+        #'mesh-output':''
+    }
+    json.dump(prefs, open("prefs.json", 'w'))
+
+def load_prefs():
+    prefs = json.load(open('prefs.json'))
+    for key, entry in dir_entries.items():
+        entry.insert(0, prefs[key])
+
+def save_prefs():
+    try:
+        prefs = json.load(open('prefs.json'))
+    except:
+        init_prefs()
+    for key in prefs:
+        prefs[key] = dir_entries[key].get()
+    json.dump(prefs, open("prefs.json", 'w'))
+
+def bake_meshes():
+    sbsbaker_path = dir_entries['sbsbaker'].get()
+    output_path = dir_entries['texture-output'].get()
+    mesh_input_path = dir_entries['mesh-input'].get()
+    #mesh_output_path = dir_entries['mesh-output'].get()
 
     output_resolution = outputs[resolution.get()]
 
@@ -37,8 +58,6 @@ def bake_meshes():
     for map_type, value in map_entries.items():
         if value.get() == 1:
             bake_selection.append(map_type)
-
-    print(bake_selection)
 
     if mesh_input_path == '':
         msg.showwarning('Missing Info', "No Mesh input path defined.")
@@ -48,14 +67,14 @@ def bake_meshes():
         return None
 
     for bake in bake_selection:
-        bu.bake_from_meshes(bake, mesh_input_path, output_resolution, output_resolution, output_path)
+        bu.bake_from_meshes(bake, sbsbaker_path, mesh_input_path, output_resolution, output_resolution, output_path)
 
-    if mesh_output_path is not '':
-        bu.move_baked_meshes(mesh_input_path, mesh_output_path, '.fbx', copy=True)
+    #if mesh_output_path is not '':
+        #bu.move_baked_meshes(mesh_input_path, mesh_output_path, '.fbx', copy=True)
 
 ###GUI###
-master = tk.Tk('Substance Bake Tool', 'Substance Bake Tool')
-master.title('Substance Bake Tool')
+master = tk.Tk()
+master.title('Substance Bake Tool 0.1')
 #master = tk.ThemedTk()
 #ttk.Style().theme_use('classic')
 
@@ -73,9 +92,9 @@ def create_bake_options(maps):
         map_entries[map] = var
 
 #Variables#
-entry_fields = 'Mesh Input', 'Texture Output', 'Mesh Output(Optional)'
+entry_fields = 'sbsbaker', 'mesh-input', 'texture-output'#, 'mesh-output'
 dir_entries = {}
-map_types = 'ambient-occlusion', 'normal', 'curvature', 'position'
+map_types = 'ambient-occlusion', 'curvature', 'position'
 map_entries = {}
 resolution_options = ['128', '256', '512', '1024', '2048', '4096']
 resolution = tk.StringVar()
@@ -84,9 +103,13 @@ resolution_label = tk.Label(master, text='Resolution:').grid(row=1, column=2)
 #Content#
 create_entries(entry_fields)
 create_bake_options(map_types)
-bake_button = tk.Button(master, text="Bake maps", command=bake_meshes)
+bake_btn = tk.Button(master, text="Bake", command=bake_meshes)
+save_prefs_btn = tk.Button(master, text="Save prefs", command=save_prefs)
 resolution_dropdown = tk.OptionMenu(master, resolution, *resolution_options)
 #Draw#
 resolution_dropdown.grid(row=1, column=3)
-bake_button.grid(row=0, column=2)
+bake_btn.grid(row=0, column=2)
+save_prefs_btn.grid(row=0, column=3)
+
+initialization()
 master.mainloop()
