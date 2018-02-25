@@ -1,5 +1,6 @@
 import os
 import json
+import gui
 
 class Bakemap:
 
@@ -37,15 +38,28 @@ def init_prefs():
     }
     json.dump(prefs, open("prefs.json", 'w'))
 
-def write_prefs():
-    
+def write_prefs(dir_entries):
+    try:
+        prefs = json.load(open('prefs.json'))
+    except:
+        init_prefs()
+    for key in prefs:
+        prefs[key] = dir_entries[key].get()
+    json.dump(prefs, open("prefs.json", 'w'))
 
 def main():
+    window = gui.create_window()
+    gui.init(window)
+    gui.draw(window)
+    
     for file_name in os.listdir(str(os.curdir)):
         if file_name == 'prefs.json':
             load_prefs()
-            break
+            return
     init_prefs()
+
+
+
 
 
 if __name__ == '__main__':

@@ -75,6 +75,7 @@ def bake_meshes():
 ###GUI###
 master = tk.Tk()
 master.title('Substance Bake Tool 0.1')
+master.iconbitmap(bitmap='./resources/sbs_icon.ico')
 #master = tk.ThemedTk()
 #ttk.Style().theme_use('classic')
 
@@ -88,7 +89,7 @@ def create_entries(entries):
 def create_bake_options(maps):
     for idx, map in enumerate(maps):
         var = tk.IntVar()
-        c = tk.Checkbutton(master, text=map, variable=var).grid(row=3, column=idx)
+        c = tk.Checkbutton(master, text=map, variable=var, indicatoron=0).grid(row=3, column=idx)
         map_entries[map] = var
 
 #Variables#

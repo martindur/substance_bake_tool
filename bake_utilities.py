@@ -3,6 +3,7 @@ import sys
 import subprocess
 import shutil
 
+
 def get_sbsbaker(path):
     if 'darwin' or 'linux' in sys.platform:
         return os.path.join(path, os.sep, 'sbsbaker')
